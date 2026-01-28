@@ -2,7 +2,7 @@ const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 const currencyFormatter = new Intl.NumberFormat(undefined, {
   style: "currency",
-  currency: "USD",
+  currency: "CAD",
   maximumFractionDigits: 2,
 });
 
@@ -77,6 +77,16 @@ function getEndDate(startDate, timeValue, timeUnit) {
   return addYears(startDate, timeValue);
 }
 
+function getCompoundAnchor(startDate, compoundFrequency) {
+  if (compoundFrequency === "weekly") {
+    return addDays(startDate, 7);
+  }
+  if (compoundFrequency === "monthly") {
+    return addMonths(startDate, 1);
+  }
+  return startDate;
+}
+
 function applyInterest(balance, ratePerPeriod) {
   if (ratePerPeriod <= 0) {
     return balance;
@@ -96,7 +106,7 @@ function simulateGrowth({
   const startDate = normalizeDate(new Date());
   const endDate = getEndDate(startDate, timeValue, timeUnit);
   let balance = startingAmount;
-  let lastCompoundDate = startDate;
+  const compoundAnchor = getCompoundAnchor(startDate, compoundFrequency);
 
   const labels = [];
   const series = [];
@@ -106,26 +116,16 @@ function simulateGrowth({
     series.push(Number(balance.toFixed(2)));
   };
 
-  if (depositAmount > 0 && isEventDay(startDate, startDate, depositFrequency)) {
-    balance += depositAmount;
-  }
-  recordPoint(startDate);
-
-  for (let date = addDays(startDate, 1); date <= endDate; date = addDays(date, 1)) {
+  for (let date = startDate; date <= endDate; date = addDays(date, 1)) {
     if (depositAmount > 0 && isEventDay(date, startDate, depositFrequency)) {
       balance += depositAmount;
     }
 
-    const isCompound = isEventDay(date, startDate, compoundFrequency);
-    const isFinal = date.getTime() === endDate.getTime();
-
-    if (isCompound || isFinal) {
-      if (isCompound) {
-        balance = applyInterest(balance, annualRate);
-      }
-      lastCompoundDate = date;
-      recordPoint(date);
+    if (isEventDay(date, compoundAnchor, compoundFrequency)) {
+      balance = applyInterest(balance, annualRate);
     }
+
+    recordPoint(date);
   }
 
   return {
