@@ -77,12 +77,11 @@ function getEndDate(startDate, timeValue, timeUnit) {
   return addYears(startDate, timeValue);
 }
 
-function applyInterest(balance, annualRate, days) {
-  if (days <= 0 || annualRate <= 0) {
+function applyInterest(balance, ratePerPeriod) {
+  if (ratePerPeriod <= 0) {
     return balance;
   }
-  const factor = Math.pow(1 + annualRate / 100, days / 365);
-  return balance * factor;
+  return balance * (1 + ratePerPeriod / 100);
 }
 
 function simulateGrowth({
@@ -121,8 +120,9 @@ function simulateGrowth({
     const isFinal = date.getTime() === endDate.getTime();
 
     if (isCompound || isFinal) {
-      const daysElapsed = daysBetween(lastCompoundDate, date);
-      balance = applyInterest(balance, annualRate, daysElapsed);
+      if (isCompound) {
+        balance = applyInterest(balance, annualRate);
+      }
       lastCompoundDate = date;
       recordPoint(date);
     }
