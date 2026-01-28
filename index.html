@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Compound Interest Calculator</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  </head>
+  <body>
+    <main class="container">
+      <header class="header">
+        <h1>Compound Interest Calculator</h1>
+        <p>Simulate growth with deposits and compounding over time.</p>
+      </header>
+
+      <section class="card">
+        <form id="calc-form" class="grid">
+          <label class="field">
+            <span>Starting amount</span>
+            <input id="starting-amount" type="number" min="0" step="0.01" value="1000" />
+          </label>
+
+          <label class="field">
+            <span>Annual rate (%)</span>
+            <input id="annual-rate" type="number" min="0" step="0.01" value="5" />
+          </label>
+
+          <label class="field">
+            <span>Compounding frequency</span>
+            <select id="compound-frequency">
+              <option value="weekday">Every weekday</option>
+              <option value="weekly" selected>Weekly</option>
+              <option value="monthly">Monthly</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Deposit amount</span>
+            <input id="deposit-amount" type="number" min="0" step="0.01" value="100" />
+          </label>
+
+          <label class="field">
+            <span>Deposit frequency</span>
+            <select id="deposit-frequency">
+              <option value="weekday">Every weekday</option>
+              <option value="weekly" selected>Weekly</option>
+              <option value="monthly">Monthly</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Time period</span>
+            <div class="field-inline">
+              <input id="time-value" type="number" min="1" step="1" value="12" />
+              <select id="time-unit">
+                <option value="weeks">Weeks</option>
+                <option value="months" selected>Months</option>
+                <option value="years">Years</option>
+              </select>
+            </div>
+          </label>
+
+          <button class="primary" type="submit">Calculate</button>
+        </form>
+      </section>
+
+      <section class="card output">
+        <div class="output-item">
+          <span>Final balance</span>
+          <strong id="final-balance">$0.00</strong>
+        </div>
+        <div class="output-item">
+          <span>Future date</span>
+          <strong id="future-date">-</strong>
+        </div>
+      </section>
+
+      <section class="card chart-card">
+        <canvas id="balance-chart" height="120"></canvas>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
